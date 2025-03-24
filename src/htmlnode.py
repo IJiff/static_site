@@ -72,6 +72,31 @@ def text_node_to_html_node(text_node):
             raise Exception("Invalid TextType")
 
 
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
+    new_nodes = []
+    for node in old_nodes:
+        text = node.text
+        new_node_text = "";
+        i = 0
+        while i < len(text):
+            if text[i] in delimiter:
+                new_nodes.append(TextNode(new_node_text, TextType.TEXT))
+                new_node_text = ""
+                for j in range(len(delimiter)):
+                    i += 1
+                while text[i] not in delimiter:
+                    new_node_text += text[i]
+                    i += 1
+                new_nodes.append(TextNode(new_node_text, text_type))
+                for j in range(len(delimiter)):
+                    i += 1
+                new_node_text = ""
+            else:
+                new_node_text += text[i]
+                i += 1
+        if len(new_node_text) != 0:
+            new_nodes.append(TextNode(new_node_text, TextType.TEXT))
+    return new_nodes
 
 
 

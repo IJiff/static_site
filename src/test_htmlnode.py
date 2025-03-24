@@ -92,3 +92,47 @@ class TestTextToHTML(unittest.TestCase):
         self.assertEqual(html_node.props["src"], "urmom.com")
         self.assertEqual(html_node.props["alt"], "This is an image node")
 
+
+class TestSplitNodesDelimiter(unittest.TestCase):
+    def test_code(self):
+        node = TextNode("This is text with a `code block` word", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+        answer = [
+            TextNode("This is text with a ", TextType.TEXT),
+            TextNode("code block", TextType.CODE),
+            TextNode(" word", TextType.TEXT),
+        ]
+        self.assertEqual(new_nodes, answer)
+
+    def test_bold(self):
+        node = TextNode("This is text with a **bold** word", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
+        answer = [
+            TextNode("This is text with a ", TextType.TEXT),
+            TextNode("bold", TextType.BOLD),
+            TextNode(" word", TextType.TEXT),
+        ]
+        self.assertEqual(new_nodes, answer)
+
+    def test_italic(self):
+        node = TextNode("This is text with _two_ different _italic_ words in it", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "_", TextType.ITALIC)
+        answer = [
+            TextNode("This is text with ", TextType.TEXT),
+            TextNode("two", TextType.ITALIC),
+            TextNode(" different ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" words in it", TextType.TEXT),
+        ]
+
+    def test_multiple(self):
+        node = TextNode("This is text with **many** different _styles_ of `words` in it, but **we're** only _looking_ for **the bold words**", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
+        answer = [
+            TextNode("This is text with ", TextType.TEXT),
+            TextNode("many", TextType.BOLD),
+            TextNode(" different _styles_ of `words` in it, but ", TextType.TEXT),
+            TextNode("we're", TextType.BOLD),
+            TextNode(" only _looking_ for ", TextType.TEXT),
+            TextNode("the bold words", TextType.BOLD),
+        ]
