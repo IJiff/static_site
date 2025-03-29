@@ -76,3 +76,43 @@ class TestSplitnodesLink(unittest.TestCase):
             TextNode("This is text with an image at the beginning", TextType.LINK, "beginning.yeet"),
             TextNode(", so maybe the function will have a problem (who knows?)", TextType.TEXT),
         ], new_nodes)
+
+
+class TestTextToTextnodes(unittest.TestCase):
+    def one_of_everything(self):
+        nodes = text_to_textnodes("This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)")
+        self.assertListEqual(
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ],
+            nodes
+        )
+
+    def the_monster(self):
+        nodes = text_to_textnodes("**This text** is starting with bold, followed by _this_ ![image of a yeet](yeetskeet.yeet). `Then, we have a code block` _immediately followed by italics_ [and a link](link.yeet), to be ultimately **finished with some more bold text")
+        self.assertListEqual(
+            [
+                TextNode("This text", TextType.BOLD),
+                TextNode(" is starting with bold, folloed by ", TextType, TEXT),
+                TextNode("this", TextType.ITALIC),
+                TextNode("image of a yeet", TextType.IMAGE, "yeetskeet.yeet"),
+                TextNode(". ", TextType.TEXT),
+                TextNode("Then, we have a code block", TextType.CODE),
+                TextNode(" ", TextType.TEXT),
+                TextNode("immediately followed by italics", TextType.Italic),
+                TextNode(" ", TextType.TEXT),
+                TextNode("and a link", TextType.LINK, "link.yeet"),
+                TextNode(", to be ultimately ", TextType.TEXT),
+                TextNode("finished with some more bold text", TextType.BOLD),
+            ],
+            nodes
+        )
