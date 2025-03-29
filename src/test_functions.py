@@ -116,3 +116,56 @@ class TestTextToTextnodes(unittest.TestCase):
             ],
             nodes
         )
+
+
+class TestMarkdownToBlocks(unittest.TestCase):
+    def test_markdown_to_blocks(self):
+        md = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+
+    def test_extra_whitespace(self):
+        md = """
+This is going to be _some random text_, but it will have
+
+
+
+**a lot of**
+
+
+
+
+newlines between
+
+
+
+
+`each section`
+Heck yeah baby
+I think I goofed in my function lol
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is going to be _some random text_, but it will have",
+                "**a lot of**",
+                "newlines between",
+                "`each section`\nHeck yeah baby\nI think I goofed in my function lol"
+            ]
+        )
